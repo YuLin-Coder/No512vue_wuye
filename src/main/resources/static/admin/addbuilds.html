@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+
+<head>
+    <title>添加楼栋信息</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/layui/css/layui.css" />
+</head>
+
+<body>
+
+    <div id="app">
+        <article class="page-container">
+            <div class="form form-horizontal" id="form-admin-add">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">楼栋名称：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="buildsname" v-model="buildsname" placeholder="请输入楼栋名称">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">楼栋位置：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="address" v-model="address" placeholder="请输入楼栋位置">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">单元数：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="num" v-model="num" placeholder="请输入单元数">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">楼层数：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="floor" v-model="floor" placeholder="请输入楼层数">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">负责人：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="manager" v-model="manager" placeholder="请输入负责人">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">联系方式：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="contact" v-model="contact" placeholder="请输入联系方式">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">备注：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="memo" v-model="memo" placeholder="请输入备注">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                        <button class="btn btn-secondary radius" @click.prevent="save()"><i
+								class="Hui-iconfont">&#xe632;</i>提交保存</button>
+                        <button class="btn btn-default radius" @click.prevent="reset()">
+							<i class="Hui-iconfont">&#xe68f;</i>取消重置
+						</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <script type="text/javascript" src="./hui/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.admin.js"></script>
+
+    <!--此页面业务相关的脚本-->
+    <script type="text/javascript" src="./hui/layui/layui.js"></script>
+    <script type="text/javascript" src="./hui/js/axios.min.js"></script>
+    <script type="text/javascript" src="./hui/js/vue.js"></script>
+    <script type="text/javascript">
+        const vue = new Vue({ // 实例化Vue对象
+            el: '#app', // 绑定作用域
+            data: { //定义数据
+                buildsname: '', // 定义楼栋名称数据
+                address: '', // 定义楼栋位置数据
+                num: '', // 定义单元数数据
+                floor: '', // 定义楼层数数据
+                manager: '', // 定义负责人数据
+                contact: '', // 定义联系方式数据
+                memo: '', // 定义备注数据
+            },
+            methods: {
+                save: function() {
+                    let _this = this;
+                    var data = {
+                        buildsname: _this.buildsname,
+                        address: _this.address,
+                        num: _this.num,
+                        floor: _this.floor,
+                        manager: _this.manager,
+                        contact: _this.contact,
+                        memo: _this.memo,
+                    };
+                    axios.post('http://127.0.0.1:8080/vue_wuye/builds/insertBuilds.action', data).then(result => {
+                        if (result.data.code > 0) {
+                            if (window.confirm('保存成功,是否继续添加？')) {
+                                _this.reset();
+                            } else {
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.location.reload();
+                                parent.layer.close(index);
+                            }
+                        } else {
+                            console.log('保存失败,请稍后再试');
+                        }
+                    });
+                },
+                reset: function() {
+                    this.pageLoad();
+                },
+                pageLoad: function() { // 页面加载
+                    this.buildsname = '';
+                    this.address = '';
+                    this.num = '';
+                    this.floor = '';
+                    this.manager = '';
+                    this.contact = '';
+                    this.memo = '';
+                },
+                validate: function() { // 验证输入非空
+                },
+            },
+            created() { // 生命周期相关的函数
+                let _this = this;
+                _this.pageLoad();
+            },
+        })
+    </script>
+    <!--/ 此页面业务相关的脚本-->
+
+
+</body>
+
+</html>

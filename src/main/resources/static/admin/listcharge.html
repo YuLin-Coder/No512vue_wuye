@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>物业收费列表</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/layui/css/layui.css" />
+</head>
+
+<body>
+    <div id="app">
+        <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 物业收费管理 <span class="c-gray en">&gt;</span> 物业收费列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);"
+                title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+        <div class="page-container">
+            <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+				<input type="text" class="input-text" style="width: 250px" placeholder="输入收费单号" id="keywords" v-model="keywords">
+				<button type="button" class="btn btn-success radius" title="查询" @click="query()">
+					<i class="Hui-iconfont">&#xe665;</i> 查询
+				</button>
+					<a href="javascript:;" @click.prevent="datadel()" class="btn btn-danger radius"><i
+							class="Hui-iconfont">&#xe6e2;</i>批量删除</a>
+					<a href="javascript:;" onclick="openForm('添加物业收费','addcharge.html','800','500')"
+						class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加物业收费</a></span> </div>
+
+            <table class="table table-border table-bordered table-bg">
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="10">物业收费列表</th>
+                    </tr>
+                    <tr class="text-c">
+                        <th>&nbsp;</th>
+                        <th>收费单号</th>
+                        <th>楼栋</th>
+                        <th>业主</th>
+                        <th>收费类型</th>
+                        <th>总计</th>
+                        <th>创建日期</th>
+                        <th>状态</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+
+                <tr class="text-c" v-for="item in charge" :key="item.chargeid">
+                    <td><input type="checkbox" :value="item.chargeid" placeholder="请选择" v-model="ids"></td>
+                    <td>{{ item.cno }}</td>
+                    <td>{{ item.buildsname }}</td>
+                    <td>{{ item.address }}</td>
+                    <td>{{ item.catename }}</td>
+                    <td>{{ item.total }}</td>
+                    <td>{{ item.addtime }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.memo }}</td>
+                    <td><span v-if="item.status == '欠费'"><a href="javascript:;" title="" @click="status(item.chargeid)">缴费</a>&nbsp;&nbsp;<a href="javascript:;" title="编辑" @click="getChargeById(item.chargeid)"><i
+						class="Hui-iconfont">&#xe6df;</i></a>&nbsp;&nbsp;</span><a href="javascript:;" @click="deleteCharge(item.chargeid)" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                </tr>
+            </table>
+            <!-- 存放分页的容器 -->
+            <div id="layui" class="r"></div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="./hui/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.admin.js"></script>
+
+    <script type="text/javascript" src="./hui/layui/layui.js"></script>
+    <script type="text/javascript" src="./hui/js/axios.min.js"></script>
+    <script type="text/javascript" src="./hui/js/vue.js"></script>
+    <script type="text/javascript">
+        function openForm(title, url, w, h) {
+            layer_show(title, url, w, h);
+        }
+
+        const vue = new Vue({ // 实例化Vue对象
+            el: '#app', // 绑定作用域
+            data: { //定义数据 用于vue的双向绑定
+                charge: [],
+                ids: [], // 定义批量删除的数组
+                page: {},
+                count: 0,
+                page: 1,
+                limit: 10,
+                keywords: '', //查询关键字
+            },
+            created() { // 生命周期相关的函数
+                this.loadTable(); // 调用查询物业收费信息的方法
+            },
+            methods: {
+                loadTable: function() { // 查询物业收费信息的函数
+                    let _this = this;
+                    axios.get('http://127.0.0.1:8080/vue_wuye/charge/getChargeByPage.action?page=' + _this.page + '&limit=' + _this.limit).then(result => {
+                        _this.charge = result.data.data;
+                        _this.count = result.data.count;
+                        if (_this.page == 1) {
+                            _this.loadPage();
+                        }
+                    });
+                },
+                loadPage: function() { // 调用LayUI分页标签的使用
+                    layui.use(['laypage'], function() {
+                        const laypage = layui.laypage;
+                        laypage.render({
+                            elem: 'layui', // 定义标签显示
+                            count: vue.count, //数据量
+                            limit: vue.limit, //每页限制
+                            jump: function(obj, first) {
+                                if (!first) {
+                                    vue.page = obj.curr;
+                                    vue.loadTable();
+                                }
+                            }
+                        });
+                    })
+                },
+                deleteCharge: function(chargeid) { // 根据主键删除物业收费信息
+                    let _this = this;
+                    if (window.confirm('确定要删除这条记录吗？')) {
+                        axios.get('http://127.0.0.1:8080/vue_wuye/charge/deleteCharge.action?id=' + chargeid).then(result => {
+                            if (result.data.code > 0) {
+                                _this.loadTable();
+                            } else {
+                                alert('系统错误，请稍后再试');
+                            }
+                        });
+                    }
+                },
+                datadel: function() { // 批量删除物业收费信息
+                    let _this = this;
+                    if (window.confirm('确定要批量删除记录吗？')) {
+                        axios.post('http://127.0.0.1:8080/vue_wuye/charge/deleteChargeByIds.action', _this.ids).then(result => {
+                            if (result.data.code > 0) {
+                                _this.loadTable();
+                            } else {
+                                alert('系统错误，请稍后再试');
+                            }
+                        });
+                    }
+                },
+                query: function() {
+                    let _this = this;
+                    axios.get('http://127.0.0.1:8080/vue_wuye/charge/getCharge.action?page=' + _this.page + '&limit=' + _this.limit + '&keywords=' + _this.keywords).then(result => {
+                        _this.charge = result.data.data;
+                        _this.count = result.data.count;
+                        if (_this.page == 1) {
+                            _this.loadPage();
+                        }
+                    });
+                },
+                status: function(chargeid) {
+                    let _this = this;
+                    axios.get('http://localhost:8080/vue_wuye/charge/status.action?id=' + chargeid).then(result => {
+                        if (result.data.code > 0) {
+                            _this.loadTable();
+                        } else {
+                            alert('系统错误，请稍后再试');
+                        }
+                    });
+                },
+                getChargeById: function(chargeid) { // 编辑按钮点击事件
+                    let url = 'editcharge.html?id=' + chargeid;
+                    layer_show('编辑物业收费', url, '', '');
+                },
+            },
+        });
+    </script>
+
+</body>
+
+</html>

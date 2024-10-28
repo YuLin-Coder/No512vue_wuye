@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+
+<head>
+    <title>添加物业收费信息</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/layui/css/layui.css" />
+</head>
+
+<body>
+
+    <div id="app">
+        <article class="page-container">
+            <div class="form form-horizontal" id="form-admin-add">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">收费单号：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="cno" v-model="cno" readonly="readonly" placeholder="">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">楼栋：</label>
+                    <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+							<select class="select" title="楼栋" id="buildsid" v-model="buildsid">
+								<option :value="0">---请选择楼栋---</option>
+								<option :value="item.buildsid" v-for="item in builds">{{ item.buildsname }}</option>
+							</select>
+						</span> </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">业主：</label>
+                    <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+							<select class="select" title="业主" id="usersid" v-model="usersid">
+								<option :value="0">---请选择业主---</option>
+								<option :value="item.usersid" v-for="item in users">{{ item.address }}</option>
+							</select>
+						</span> </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">收费类型：</label>
+                    <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+							<select class="select" title="收费类型" id="cateid" v-model="cateid">
+								<option :value="0">---请选择收费类型---</option>
+								<option :value="item.cateid" v-for="item in cate">{{ item.catename }}</option>
+							</select>
+						</span> </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">总计：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="total" v-model="total" placeholder="请输入总计">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">备注：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="memo" v-model="memo" placeholder="请输入备注">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                        <button class="btn btn-secondary radius" @click.prevent="save()"><i
+								class="Hui-iconfont">&#xe632;</i>提交保存</button>
+                        <button class="btn btn-default radius" @click.prevent="reset()">
+							<i class="Hui-iconfont">&#xe68f;</i>取消重置
+						</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <script type="text/javascript" src="./hui/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.admin.js"></script>
+
+    <!--此页面业务相关的脚本-->
+    <script type="text/javascript" src="./hui/layui/layui.js"></script>
+    <script type="text/javascript" src="./hui/js/axios.min.js"></script>
+    <script type="text/javascript" src="./hui/js/vue.js"></script>
+    <script type="text/javascript">
+        const vue = new Vue({ // 实例化Vue对象
+            el: '#app', // 绑定作用域
+            data: { //定义数据
+                cno: '', // 定义收费单号数据
+                buildsid: '0', // 定义楼栋数据
+                usersid: '0', // 定义业主数据
+                cateid: '0', // 定义收费类型数据
+                total: '', // 定义总计数据
+                memo: '', // 定义备注数据
+                builds: {}, // 用来保存楼栋对象数据
+                users: {}, // 用来保存业主对象数据
+                cate: {}, // 用来保存收费类型对象数据
+            },
+            methods: {
+                save: function() {
+                    let _this = this;
+                    var data = {
+                        cno: _this.cno,
+                        buildsid: _this.buildsid,
+                        usersid: _this.usersid,
+                        cateid: _this.cateid,
+                        total: _this.total,
+                        memo: _this.memo,
+                    };
+                    axios.post('http://127.0.0.1:8080/vue_wuye/charge/insertCharge.action', data).then(result => {
+                        if (result.data.code > 0) {
+                            if (window.confirm('保存成功,是否继续添加？')) {
+                                _this.reset();
+                            } else {
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.location.reload();
+                                parent.layer.close(index);
+                            }
+                        } else {
+                            console.log('保存失败,请稍后再试');
+                        }
+                    });
+                },
+                reset: function() {
+                    this.pageLoad();
+                },
+                pageLoad: function() { // 页面加载
+                    axios.get('http://127.0.0.1:8080/vue_wuye/charge/createCharge.action').then(result => {
+                        this.cno = result.data.cno;
+                    });
+                    this.buildsid = '0';
+                    this.usersid = '0';
+                    this.cateid = '0';
+                    this.total = '';
+                    this.memo = '';
+                },
+                validate: function() { // 验证输入非空
+                },
+            },
+            created() { // 生命周期相关的函数
+                let _this = this;
+                axios.get('http://127.0.0.1:8080/vue_wuye/builds/getAllBuilds.action').then(result => {
+                    _this.builds = result.data;
+                });
+                axios.get('http://127.0.0.1:8080/vue_wuye/users/getAllUsers.action').then(result => {
+                    _this.users = result.data;
+                });
+                axios.get('http://127.0.0.1:8080/vue_wuye/cate/getAllCate.action').then(result => {
+                    _this.cate = result.data;
+                });
+                _this.pageLoad();
+            },
+        })
+    </script>
+    <!--/ 此页面业务相关的脚本-->
+
+
+</body>
+
+</html>

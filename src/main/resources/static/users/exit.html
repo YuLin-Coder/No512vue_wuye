@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <div id="app">
+    </div>
+</body>
+<script type="text/javascript" src="../admin/hui/jquery/1.9.1/jquery.min.js"></script>
+<!--此页面业务相关的脚本-->
+<script type="text/javascript" src="../admin/hui/layui/layui.js"></script>
+<script type="text/javascript" src="../admin/hui/js/axios.min.js"></script>
+<script type="text/javascript" src="../admin/hui/js/vue.js"></script>
+<script type="text/javascript">
+    const vue = new Vue({ // 实例化Vue对象
+        el: '#app', // 绑定作用域
+        data: { //定义数据 用于vue的双向绑定
+        },
+        methods: {
+
+        },
+        created() { // 生命周期相关的函数
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        },
+    })
+</script>
+
+</html>

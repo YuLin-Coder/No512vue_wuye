@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+
+<head>
+    <title>编辑网站内容信息</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="./hui/layui/css/layui.css" />
+</head>
+
+<body>
+    <div id="app">
+        <article class="page-container">
+            <div class="form form-horizontal" id="form-admin-add">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">标题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="title" v-model="title">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">栏目：</label>
+                    <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+							<select class="select" title="栏目" id="bannerid" v-model="bannerid">
+								<option :value="item.bannerid" v-for="item in banner">{{ item.bannername }}</option>
+							</select>
+						</span> </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">图片：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <form id="head-img" enctype="multipart/form-data">
+                            <input type="file" name="image" id="image" placeholder="图片" />
+                            <button type="button" class="btn btn-primary radius upload-btn" @click="upload()" id="btnUpload"><i class="Hui-iconfont">&#xe642;</i> 文件上传 </button>
+                        </form>
+                        <input type="hidden" id="url" v-model="url" />
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">是否置顶：</label>
+                    <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                        <div class="radio-box">
+                            <input type="radio" id="istop-1" v-model="istop" value="是" checked>
+                            <label for="istop-1">是</label>
+                        </div>
+                        <div class="radio-box">
+                            <input type="radio" id="istop-2" v-model="istop" value="否">
+                            <label for="istop-2">否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">是否轮播：</label>
+                    <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                        <div class="radio-box">
+                            <input type="radio" id="isflv-1" v-model="isflv" value="是" checked>
+                            <label for="isflv-1">是</label>
+                        </div>
+                        <div class="radio-box">
+                            <input type="radio" id="isflv-2" v-model="isflv" value="否">
+                            <label for="isflv-2">否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">内容：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea cols="80" rows="10" id="contents" v-model="contents" class="textarea" placeholder="请输入内容"></textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                        <button class="btn btn-secondary radius" @click.prevent="update()"><i
+								class="Hui-iconfont">&#xe632;</i>提交保存</button>
+                        <button class="btn btn-default radius" @click.prevent="reset()">
+							<i class="Hui-iconfont">&#xe68f;</i>取消重置
+						</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <script type="text/javascript" src="./hui/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="./hui/js/H-ui.admin.js"></script>
+
+    <!--此页面业务相关的脚本-->
+    <script type="text/javascript" src="./hui/layui/layui.js"></script>
+    <script type="text/javascript" src="./hui/js/axios.min.js"></script>
+    <script type="text/javascript" src="./hui/js/vue.js"></script>
+    <script type="text/javascript">
+        const vue = new Vue({
+            el: '#app', // 绑定作用域
+            data: { //定义数据 用于vue的双向绑定
+                articleid: '',
+                title: '',
+                bannerid: '',
+                url: '',
+                istop: '是',
+                isflv: '是',
+                contents: '',
+                banner: {}, // 用来保存banner对象数据
+            },
+            methods: {
+                getUrlParam: function() {
+                    var name, value;
+                    var str = location.href; // 取得整个地址栏
+                    var num = str.indexOf("?"); // 定位参数起始位置
+                    str = str.substr(num + 1); // 取得所有参数 
+                    var arr = str.split("&"); // 各个参数放到数组里
+                    for (var i = 0; i < arr.length; i++) {
+                        num = arr[i].indexOf("=");
+                        if (num > 0) {
+                            name = arr[i].substring(0, num);
+                            value = arr[i].substr(num + 1);
+                            this.articleid = value; // 确认主键参数
+                        }
+                    }
+                },
+                loadPage: function() {
+                    let _this = this;
+                    axios.get('http://127.0.0.1:8080/vue_wuye/article/getArticleById.action?id=' + _this.articleid).then(result => {
+                        _this.title = result.data.title;
+                        _this.bannerid = result.data.bannerid;
+                        _this.url = result.data.image;
+                        _this.istop = result.data.istop;
+                        _this.isflv = result.data.isflv;
+                        _this.contents = result.data.contents;
+                    });
+                    axios.get('http://127.0.0.1:8080/vue_wuye/banner/getAllBanner.action').then(result => {
+                        _this.banner = result.data;
+                    });
+                },
+                reset: function() {
+                    this.loadPage();
+                },
+                upload: function() {
+                    let _this = this;
+                    var formData = new FormData($('#head-img')[0]);
+                    axios.post('http://127.0.0.1:8080/vue_wuye/ajaxupload/upload.action', formData).then(result => {
+                        _this.url = result.data.url;
+                        alert('上传成功');
+                    });
+                },
+                update: function() {
+                    let _this = this;
+                    var data = {
+                        articleid: _this.articleid,
+                        title: _this.title,
+                        bannerid: _this.bannerid,
+                        image: _this.url,
+                        istop: _this.istop,
+                        isflv: _this.isflv,
+                        contents: _this.contents,
+                    };
+                    axios.post('http://127.0.0.1:8080/vue_wuye/article/updateArticle.action', data).then(result => {
+                        if (result.data.code > 0) {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(index);
+                        } else {
+                            alert('修改失败');
+                        }
+                    });
+                },
+            },
+
+            created() { // 生命周期相关的函数
+                this.getUrlParam();
+                this.loadPage();
+                let _this = this;
+                axios.get('http://127.0.0.1:8080/vue_wuye/banner/getAllBanner.action').then(result => {
+                    _this.banner = result.data;
+                });
+            },
+        })
+    </script>
+    <!--/ 此页面业务相关的脚本-->
+
+</body>
+
+</html>

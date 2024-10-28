@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>物业管理系统</title>
+    <link href="./themes/nzblue/css/css.css" rel="stylesheet" type="text/css">
+    <link href="./themes/nzblue/css/css_2.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div id="app">
+        <table width="100%" height="200" border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #1C5CA6; background-image: url(themes/nzblue/images/nzgov_06.jpg); background-attachment: scroll; background-repeat: no-repeat; background-position: center center;">
+            <tr>
+                <td align="right" valign="middle">
+                    <table border="0" cellpadding="0" cellspacing="0" style="margin-right: 20px;">
+
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <!--下拉这里开始 -->
+
+        <div id="top_dh_box">
+            <div id="top_dh_01">
+                <div id="sddm">
+                    <li id="sddmdiv2"><a href="index.html">本站首页</a></li>
+                    <li v-for="item in bannerList" :key="item.bannerid">
+                        <table width="120" border="0" cellpadding="0" cellspacing="0" class="dh_bj01">
+                            <tr>
+                                <td height="55" align="center"><a :href="'article.html?id='+item.bannerid+''">{{ item.bannername }}</a></td>
+                            </tr>
+                        </table>
+                    </li>
+                    <!--导航 -->
+                    <!--导航 -->
+                    <li v-if="!islogin">
+                        <table width="120" border="0" cellpadding="0" cellspacing="0" class="dh_bj01">
+                            <tr>
+                                <td height="55" align="center"><a href="#" onmouseover="mopen('m663')" onmouseout="mclosetime()">用户菜单</a></td>
+                            </tr>
+                        </table>
+                        <div id="m663" onMouseOver="mcancelclosetime()" onMouseOut="mclosetime()">
+                            <table border="0" cellpadding="0" cellspacing="0" class="top_dh_02">
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="editpwd.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;修改密码</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="userinfo.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;个人信息</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="mycharge.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;我的费用</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="myparks.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;我的停车位</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="addrepair.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;业主报修</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="myrepair.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;我的报修</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="addcomplains.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;意见反馈</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left>
+                                        <table width="100" border="0" cellpadding="0" cellspacing="0" class="xux" onMouseOver="this.bgColor='#F5F5F5';" onMouseOut="this.bgColor='#FFFFFF';" bgcolor="#ffffff">
+                                            <tr>
+                                                <td height="40">
+                                                    <a href="mycomplains.html"><img src="themes/nzblue/images/biao.gif" border="0">&nbsp;我的意见反馈</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </li>
+                    <!--导航 -->
+                    <li v-if="!islogin">
+                        <table width="120" border="0" cellpadding="0" cellspacing="0" class="dh_bj01">
+                            <tr>
+                                <td height="55" align="center"><a href="exit.html">退出登录</a></td>
+                            </tr>
+                        </table>
+                    </li>
+                    <!--导航 
+                    <li>
+                        <table width="120" border="0" cellpadding="0" cellspacing="0" class="dh_bj01">
+                            <tr>
+                                <td height="55" align="center"><a href="index/preReg.action">用户注册</a></td>
+                            </tr>
+                        </table>
+                    </li>-->
+                    <li v-if="islogin">
+                        <table width="120" border="0" cellpadding="0" cellspacing="0" class="dh_bj01">
+                            <tr>
+                                <td height="55" align="center"><a href="login.html">用户登录</a></td>
+                            </tr>
+                        </table>
+                    </li>
+                </div>
+            </div>
+        </div>
+
+
+        <br>
+        <br>
+        <br>
+        <div id="box" style="width: 1200px;">
+            <table class="table1200" border="0" align="center" cellpadding="1" cellspacing="0" bordercolor="#FFFFFF" bgcolor="#FFFFFF" style="margin-bottom: 20px;">
+                <tr>
+                    <td align="center" valign="top" bgcolor="#FFFFFF" class="bg_qc">
+                        <div style="font-size: 14px; background-color: #F5F5F5; height: 30px; width: 100%; line-height: 30px; text-align: left; font-family: 宋体;">
+                            &nbsp;&nbsp;您的位置：<a href="index.html">首页</a>&nbsp;&gt;&nbsp;个人信息
+                        </div>
+                        <table height="30" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </table>
+                        <table width="46%" border="0" cellpadding="5" cellspacing="1" bgcolor="#E0EDB7">
+                            <tr>
+                                <td height="30" colspan="2" align="center" background="themes/nzblue/images/nzcms/list_bg.gif" class="white14B">个人信息</td>
+                            </tr>
+                            <tr>
+                                <td width="80" height="50" align="right" bgcolor="#FFFFFF">用户账号：</td>
+                                <td bgcolor="#FFFFFF">{{username}}<input type="hidden" name="username" id="username" v-model="username" readonly disabled/></td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="right" bgcolor="#FFFFFF">姓名：</td>
+                                <td bgcolor="#FFFFFF"><input type="text" name="realname" style="width: 260px; height: 30px" id="realname" v-model="realname" readonly disabled/></td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="right" bgcolor="#FFFFFF">性别：</td>
+                                <td bgcolor="#FFFFFF"><input type="radio" name="sex" value="男" title="男" id="sex" v-model="sex" />男 &nbsp;&nbsp;&nbsp; <input type="radio" name="sex" value="女" title="女" id="sex" v-model="sex" />女</td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="right" bgcolor="#FFFFFF">出生日期：</td>
+                                <td bgcolor="#FFFFFF"><input type="text" name="birthday" style="width: 260px; height: 30px" id="birthday" v-model="birthday" @click="datePicker('birthday')" /></td>
+                            </tr>
+                            <tr>
+                                <td width="80" height="50" align="right" bgcolor="#FFFFFF">所在楼栋：</td>
+                                <td bgcolor="#FFFFFF">{{buildsname}}</td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="right" bgcolor="#FFFFFF">联系方式：</td>
+                                <td bgcolor="#FFFFFF"><input type="text" name="contact" style="width: 260px; height: 30px" id="contact" v-model="contact" /></td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="right" bgcolor="#FFFFFF">家庭住址：</td>
+                                <td bgcolor="#FFFFFF"><input type="text" name="address" style="width: 260px; height: 30px" id="address" v-model="address" readonly disabled/></td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="#FFFFFF" colspan="2" align="center"><label> <input type="submit" name="Submit"
+                                    value="确认修改" @click.prevent="toUpdate()"/> 
+                                    </label></td>
+                            </tr>
+                        </table>
+                        <table height="50" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <iframe src="footer.html" height="200px;" width="100%" marginwidth="0" marginheight="0" scrolling="No" frameborder="NO" id="sina_roll" border="0" style="margin-bottom: 15px;"></iframe>
+</body>
+<script type="text/javascript" src="../My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../admin/hui/jquery/1.9.1/jquery.min.js"></script>
+<!--此页面业务相关的脚本-->
+<script type="text/javascript" src="../admin/hui/layui/layui.js"></script>
+<script type="text/javascript" src="../admin/hui/js/axios.min.js"></script>
+<script type="text/javascript" src="../admin/hui/js/vue.js"></script>
+<script type="text/javascript">
+    const vue = new Vue({ // 实例化Vue对象
+        el: '#app', // 绑定作用域
+        data: { //定义数据 用于vue的双向绑定
+            islogin: '', // 判断是否登录
+            userid: '', // 用户主键
+            username: '',
+            realname: '', // 姓名
+            clazzid: '', //所在班级主键
+            bannerList: {}, //  
+            username: '', // 用户名
+            password: '', // 密码
+            sex: '男', // 定义性别数据
+            birthday: '', // 定义出生日期数据
+            contact: '', // 定义联系方式数据
+            address: '',
+            buildsname: '',
+            regdate: '',
+            users: [],
+        },
+        methods: {
+            datePicker: function(elementId) {
+                let vueObj = this;
+                WdatePicker({
+                    el: elementId,
+                    dateFmt: 'yyyy-MM-dd', //日期格式，可以只显示年或年月，也可以额外显示时间
+                    onpicked: function() {
+                        var value = $("#" + elementId).val();
+                        vueObj.birthday = value;
+                    },
+                    oncleared: function() {
+                        vueObj.birthday = null;
+                    },
+                    isShowClear: true,
+                    readOnly: true
+                });
+            },
+            toUpdate: function() {
+                let _this = this;
+                var data = {
+                    usersid: _this.userid,
+                    username: _this.username,
+                    realname: _this.realname,
+                    sex: _this.sex,
+                    birthday: _this.birthday,
+                    contact: _this.contact,
+                };
+                axios.post('http://127.0.0.1:8080/vue_wuye/index/personal.action', data).then(result => {
+                    if (result.data.code > 0) {
+                        alert('修改成功');
+                        this.loadPage();
+                    } else {
+                        alert('修改失败');
+                    }
+                });
+            },
+            loadPage: function() {
+                let _this = this;
+                _this.userid = sessionStorage.getItem('userid');
+                _this.islogin = sessionStorage.getItem('userid') == null;
+                _this.username = sessionStorage.getItem('username');
+                _this.realname = sessionStorage.getItem('realname');
+                _this.clazzid = sessionStorage.getItem('clazzid');
+                axios.get('http://127.0.0.1:8080/vue_wuye/index/front.action').then(result => {
+                    _this.bannerList = result.data.bannerList;
+                });
+                axios.get('http://127.0.0.1:8080/vue_wuye/index/userinfo.action?id=' + _this.userid).then(result => {
+                    _this.username = result.data.users.username;
+                    _this.realname = result.data.users.realname;
+                    _this.sex = result.data.users.sex;
+                    _this.birthday = result.data.users.birthday;
+                    _this.contact = result.data.users.contact;
+                    _this.regdate = result.data.users.regdate;
+                    _this.buildsname = result.data.users.buildsname;
+                    _this.address = result.data.users.address;
+                });
+            },
+        },
+        created() { // 生命周期相关的函数
+            this.loadPage();
+        },
+    })
+</script>
+<script type="text/javascript">
+    var timeout = 200;
+    var closetimer = 0;
+    var ddmenuitem = 0;
+    // open hidden layer
+    function mopen(id) {
+        // cancel close timer
+        mcancelclosetime();
+        // close old layer
+        if (ddmenuitem)
+            ddmenuitem.style.visibility = 'hidden';
+        // get new layer and show it
+        ddmenuitem = document.getElementById(id);
+        ddmenuitem.style.visibility = 'visible';
+    }
+    // close showed layer
+    function mclose() {
+        if (ddmenuitem)
+            ddmenuitem.style.visibility = 'hidden';
+    }
+    // go close timer
+    function mclosetime() {
+        closetimer = window.setTimeout(mclose, timeout);
+    }
+    // cancel close timer
+    function mcancelclosetime() {
+        if (closetimer) {
+            window.clearTimeout(closetimer);
+            closetimer = null;
+        }
+    }
+    // close layer when click-out
+    document.onclick = mclose;
+</script>
+
+</html>
